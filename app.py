@@ -54,7 +54,7 @@ def admin_required(f):
     return decorated
 
 # Routes
-@app.route('/projects', methods=['GET'])
+@app.route('/api/v1/projects', methods=['GET'])
 @token_required
 def get_projects():
     projects = list(projects_collection.find())
@@ -62,7 +62,7 @@ def get_projects():
         project['_id'] = str(project['_id'])
     return jsonify(projects)
 
-@app.route('/projects', methods=['POST'])
+@app.route('/api/v1/projects', methods=['POST'])
 @token_required
 @admin_required
 def create_project():
@@ -99,7 +99,7 @@ def create_project():
     
     return jsonify(project), 201
 
-@app.route('/project/<id>', methods=['GET'])
+@app.route('/api/v1/project/<id>', methods=['GET'])
 @token_required
 def get_project(id):
     try:
