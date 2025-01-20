@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  service:
+  project-service:
     container_name: ${SERVICE_ID}
     build: .
     ports:
