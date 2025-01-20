@@ -24,9 +24,15 @@ print(f'db_host: {db_host}')
 print(f'db_port: {db_port}')
 print(f'db_name: {db_name}')
 
-client = MongoClient(f'mongodb://{db_host}:{db_port}/')
-db = client[db_name]
-projects_collection = db.projects
+try:
+    client = MongoClient(f'mongodb://{db_host}:{db_port}/', serverSelectionTimeoutMS=5000)
+    # Test the connection
+    client.admin.command('ping')
+    db = client[db_name]
+    projects_collection = db.projects
+except Exception as e:
+    print(f"Failed to connect to MongoDB: {str(e)}")
+    raise
 
 # JWT Configuration
 JWT_SECRET = os.getenv('JWT_SECRET')
@@ -174,8 +180,6 @@ if __name__ == '__main__':
     if not JWT_SECRET:
         raise ValueError("JWT_SECRET environment variable is required")
     
-    # client.admin.command('ping')
-
     # Register service with Consul
     service_id = register_service()
     
