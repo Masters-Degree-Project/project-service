@@ -53,7 +53,7 @@ def register_service():
             'timeout': '5s'
         }
     )
-    return service_id
+    return SERVICE_ID
 
 def deregister_service(service_id):
     """Deregister service from Consul"""
