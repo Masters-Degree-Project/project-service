@@ -17,7 +17,7 @@ services:
     container_name: ${SERVICE_ID}-db
     image: mongo:latest
     ports:
-      - "${DB_PORT}:${DB_PORT}"
+      - "${DB_PORT}:27017"
     volumes:
       - mongodb_data:/data/db
     networks:
