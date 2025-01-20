@@ -121,38 +121,42 @@ def get_projects():
 @token_required
 @admin_required
 def create_project():
-    data = request.get_json()
-    
-    if not data or not data.get('name'):
-        return jsonify({'message': 'Name is required'}), 400
-    
-    # Generate slug from name
-    slug = slugify(data['name'])
-    
-    # Check if project with same name or slug already exists
-    existing_project = projects_collection.find_one({
-        '$or': [
-            {'name': data['name']},
-            {'slug': slug}
-        ]
-    })
-    
-    if existing_project:
-        if existing_project['name'] == data['name']:
-            return jsonify({'message': 'A project with this name already exists'}), 400
-        else:
-            return jsonify({'message': 'A project with this slug already exists'}), 400
-    
-    project = {
-        'name': data['name'],
-        'description': data.get('description', ''),
-        'slug': slug
-    }
-    
-    result = projects_collection.insert_one(project)
-    project['_id'] = str(result.inserted_id)
-    
-    return jsonify(project), 201
+    try:
+        data = request.get_json()
+        
+        if not data or not data.get('name'):
+            return jsonify({'message': 'Name is required'}), 400
+        
+        # Generate slug from name
+        slug = slugify(data['name'])
+        
+        # Check if project with same name or slug already exists
+        existing_project = projects_collection.find_one({
+            '$or': [
+                {'name': data['name']},
+                {'slug': slug}
+            ]
+        })
+        
+        if existing_project:
+            if existing_project['name'] == data['name']:
+                return jsonify({'message': 'A project with this name already exists'}), 400
+            else:
+                return jsonify({'message': 'A project with this slug already exists'}), 400
+        
+        project = {
+            'name': data['name'],
+            'description': data.get('description', ''),
+            'slug': slug
+        }
+        
+        result = projects_collection.insert_one(project)
+        project['_id'] = str(result.inserted_id)
+        
+        return jsonify(project), 201
+    except Exception as e:
+        app.logger.error(f"Error creating project: {str(e)}")
+        return jsonify({'message': 'An error occurred while creating the project'}), 500
 
 @app.route('/api/v1/project/<id>', methods=['GET'])
 @token_required
