@@ -11,11 +11,11 @@ services:
       - DB_PORT=${DB_PORT}
       - DB_NAME=${DB_NAME}
     depends_on:
-      - mongodb
+      - project-service-mongodb
     networks:
       - traefik-network
 
-  mongodb:
+  project-service-mongodb:
     container_name: ${SERVICE_ID}-db
     image: mongo:latest
     ports:
