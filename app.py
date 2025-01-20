@@ -40,13 +40,20 @@ consul_client = consul.Consul(host=CONSUL_HOST, port=CONSUL_PORT)
 
 def register_service():
     """Register service with Consul"""
-
     consul_client.agent.service.register(
         name=SERVICE_NAME,
         service_id=SERVICE_ID,
         address=SERVICE_HOST,
         port=SERVICE_PORT,
-        tags=['project-service', 'microservice'],
+        tags=[
+            'project-service', 
+            'microservice',
+            'traefik.enable=true',
+            f'traefik.http.routers.{SERVICE_NAME}-router.rule=Headers(`X-Service`, `{SERVICE_NAME}`)',
+            f'traefik.http.routers.{SERVICE_NAME}-router.service={SERVICE_NAME}',
+            f'traefik.http.routers.{SERVICE_NAME}-router.entryPoints=web',
+            f'traefik.http.services.{SERVICE_NAME}.loadBalancer.server.port={SERVICE_PORT}'
+        ],
         check={
             'http': f'http://{SERVICE_HOST}:{SERVICE_PORT}/health',
             'interval': '10s',
