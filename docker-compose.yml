@@ -1,32 +1,31 @@
 version: '3.8'
 
 services:
-  app:
+  service:
+    container_name: ${SERVICE_ID}
     build: .
     ports:
-      - "${PORT}:${PORT}"
+      - "${SERVICE_PORT}:${SERVICE_PORT}"
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/
-      - DB_NAME=project_service
-      - JWT_SECRET=${JWT_SECRET}
-      - PORT=${PORT}
+      - DB_HOST=mongodb
     depends_on:
       - mongodb
     networks:
-      - project-network
+      - traefik-network
 
   mongodb:
+    container_name: ${SERVICE_ID}-db
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - "${DB_PORT}:${DB_PORT}"
     volumes:
       - mongodb_data:/data/db
     networks:
-      - project-network
+      - traefik-network
 
 networks:
-  project-network:
-    driver: bridge
+  traefik-network:
+    name: traefik-network
 
 volumes:
-  mongodb_data: 
+  mongodb_data:
