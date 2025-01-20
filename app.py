@@ -25,7 +25,8 @@ print(f'db_port: {db_port}')
 print(f'db_name: {db_name}')
 
 try:
-    client = MongoClient(f'mongodb://{db_host}:{db_port}/', serverSelectionTimeoutMS=5000)
+    client = MongoClient(f'mongodb://{db_host}:{db_port}', serverSelectionTimeoutMS=5000)
+    print(f'mongo connection string >> mongodb://{db_host}:{db_port}/')
     # Test the connection
     client.admin.command('ping')
     db = client[db_name]
