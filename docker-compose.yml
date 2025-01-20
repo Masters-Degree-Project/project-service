@@ -8,6 +8,8 @@ services:
       - "${SERVICE_PORT}:${SERVICE_PORT}"
     environment:
       - DB_HOST=mongodb
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
     depends_on:
       - mongodb
     networks:
