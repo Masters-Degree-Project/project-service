@@ -118,4 +118,4 @@ def get_project(id):
 if __name__ == '__main__':
     if not JWT_SECRET:
         raise ValueError("JWT_SECRET environment variable is required")
-    app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT', 8000))
+    app.run(debug=True, host='0.0.0.0', port=os.getenv('SERVICE_PORT', 8000))
