@@ -21,7 +21,7 @@ services:
     ports:
       - "${DB_PORT}:27017"
     volumes:
-      - mongodb_data:/data/db
+      - project_service_mongodb_data:/data/db
     networks:
       - traefik-network
 
@@ -30,4 +30,4 @@ networks:
     name: traefik-network
 
 volumes:
-  mongodb_data:
+  project_service_mongodb_data:
