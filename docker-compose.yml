@@ -7,7 +7,7 @@ services:
     ports:
       - "${SERVICE_PORT}:${SERVICE_PORT}"
     environment:
-      - DB_HOST=mongodb
+      - DB_HOST=project-service-mongodb
       - DB_PORT=${DB_PORT}
       - DB_NAME=${DB_NAME}
     depends_on:
