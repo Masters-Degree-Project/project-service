@@ -20,7 +20,7 @@ db_host = os.getenv('DB_HOST')
 db_port = os.getenv('DB_PORT')
 db_name = os.getenv('DB_NAME')
 
-client = MongoClient(f'mongodb://{db_host}:{db_port}/{db_name}')
+client = MongoClient(f'mongodb://{db_host}:{db_port}/')
 db = client[db_name]
 projects_collection = db.projects
 
