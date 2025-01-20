@@ -166,7 +166,7 @@ if __name__ == '__main__':
     if not JWT_SECRET:
         raise ValueError("JWT_SECRET environment variable is required")
     
-    client.admin.command('ping')
+    # client.admin.command('ping')
 
     # Register service with Consul
     service_id = register_service()
