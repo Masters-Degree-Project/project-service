@@ -4,6 +4,9 @@ import jwt
 from pymongo import MongoClient
 from bson import ObjectId
 import os
+import atexit
+import socket
+import consul
 from dotenv import load_dotenv
 from slugify import slugify
 
@@ -23,6 +26,43 @@ projects_collection = db.projects
 
 # JWT Configuration
 JWT_SECRET = os.getenv('JWT_SECRET')
+
+# Consul Configuration
+CONSUL_HOST = os.getenv('CONSUL_HOST', 'localhost')
+CONSUL_PORT = int(os.getenv('CONSUL_PORT', 8500))
+SERVICE_NAME = os.getenv('SERVICE_NAME', 'project-service')
+SERVICE_PORT = int(os.getenv('SERVICE_PORT', 8000))
+SERVICE_HOST = os.getenv('SERVICE_HOST', socket.gethostname())
+SERVICE_ID = os.getenv('SERVICE_ID', 'project-service-dev-1')
+
+# Initialize Consul client
+consul_client = consul.Consul(host=CONSUL_HOST, port=CONSUL_PORT)
+
+def register_service():
+    """Register service with Consul"""
+
+    consul_client.agent.service.register(
+        name=SERVICE_NAME,
+        service_id=SERVICE_ID,
+        address=SERVICE_HOST,
+        port=SERVICE_PORT,
+        tags=['project-service', 'microservice'],
+        check={
+            'http': f'http://{SERVICE_HOST}:{SERVICE_PORT}/health',
+            'interval': '10s',
+            'timeout': '5s'
+        }
+    )
+    return service_id
+
+def deregister_service(service_id):
+    """Deregister service from Consul"""
+    consul_client.agent.service.deregister(service_id)
+
+# Health check endpoint
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'healthy'}), 200
 
 def token_required(f):
     @wraps(f)
@@ -118,4 +158,11 @@ def get_project(id):
 if __name__ == '__main__':
     if not JWT_SECRET:
         raise ValueError("JWT_SECRET environment variable is required")
-    app.run(debug=True, host='0.0.0.0', port=os.getenv('SERVICE_PORT', 8000))
+    
+    # Register service with Consul
+    service_id = register_service()
+    
+    # Register deregistration function to run on shutdown
+    atexit.register(deregister_service, service_id)
+    
+    app.run(debug=True, host='0.0.0.0', port=SERVICE_PORT)
