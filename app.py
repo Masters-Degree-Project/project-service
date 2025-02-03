@@ -66,7 +66,7 @@ def register_service():
             f'traefik.http.services.{SERVICE_NAME}.loadBalancer.server.port={SERVICE_PORT}'
         ],
         check={
-            'http': f'http://{SERVICE_HOST}:{SERVICE_PORT}/health',
+            'http': f'http://{SERVICE_IP}:{SERVICE_PORT}/health',
             'interval': '10s',
             'timeout': '5s'
         }
