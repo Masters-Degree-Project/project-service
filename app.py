@@ -43,7 +43,7 @@ CONSUL_HOST = os.getenv('CONSUL_HOST', 'localhost')
 CONSUL_PORT = int(os.getenv('CONSUL_PORT', 8500))
 SERVICE_NAME = os.getenv('SERVICE_NAME', 'project-service')
 SERVICE_PORT = int(os.getenv('SERVICE_PORT', 8000))
-SERVICE_HOST = os.getenv('SERVICE_HOST', socket.gethostname())
+SERVICE_IP = os.getenv('SERVICE_IP', '127.0.0.1')
 SERVICE_ID = os.getenv('SERVICE_ID', 'project-service-dev-1')
 
 # Initialize Consul client
@@ -54,7 +54,7 @@ def register_service():
     consul_client.agent.service.register(
         name=SERVICE_NAME,
         service_id=SERVICE_ID,
-        address=SERVICE_HOST,
+        address=SERVICE_IP,
         port=SERVICE_PORT,
         tags=[
             'project-service', 
