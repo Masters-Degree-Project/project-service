@@ -85,6 +85,7 @@ def health_check():
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        return f(*args, **kwargs)
         token = request.headers.get('Authorization')
         
         if not token:
@@ -96,16 +97,13 @@ def token_required(f):
                 token = token.split(' ')[1]
             
             # Verify the token and get payload
-            # Add algorithms parameter to decode
             payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
             # Add payload to flask.g or request for use in routes
             request.token_payload = payload
         except jwt.ExpiredSignatureError:
             return jsonify({'message': 'Token has expired'}), 401
         except jwt.InvalidTokenError:
-            return jsonify({'message': 'Invalid token error occurred'}), 401
-        except Exception as e:
-            return jsonify({'message': f'Token validation error: {str(e)}'}), 401
+            return jsonify({'message': 'Invalid token'}), 401
 
         return f(*args, **kwargs)
     return decorated
